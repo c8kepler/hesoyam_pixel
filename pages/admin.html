@@ -1,70 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Admin | Hesoyam Pixel</title>
-  <!-- Tailwind CSS -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hesoyam Pixel · Panel de administración</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Orbitron:wght@500;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    window.tailwind = { config: { corePlugins: { preflight: false } } };
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script>
+    if (localStorage.getItem("sesionActiva") !== "true") {
+      location.replace("login.html?requiere=1");
+    }
+  </script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen">
+<body>
+  <div class="floor"></div>
+  <canvas id="rain"></canvas>
 
-  <!-- Barra de navegación -->
-  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
-    <div class="flex items-center gap-3">
-      <span class="bg-indigo-600 text-white font-bold px-2.5 py-1 rounded text-sm">ADMIN</span>
-      <h1 class="text-xl font-bold text-white">Hesoyam Pixel — Catálogo de Videojuegos</h1>
+  <header>
+    <div>
+      <h1 class="glitch" data-text="HESOYAM PIXEL">HESOYAM PIXEL</h1>
+      <span class="tag" id="tag">Catálogo de videojuegos · Panel admin</span>
     </div>
-
-    <div class="flex items-center gap-3">
-      <a href="../index.html"
-        class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-4 py-2 rounded text-sm font-medium transition">
-        Ver Catálogo Público
-      </a>
-      <button id="btn-cerrar-sesion" type="button"
-        class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition">
-        Cerrar Sesión
-      </button>
-    </div>
+    <nav class="items-center">
+      <a class="btn" href="../index.html">Catálogo público</a>
+      <button class="btn p" id="btn-modo-juego" type="button">Modo: Juego Retro</button>
+      <button class="btn" id="btn-cerrar-sesion" type="button">Cerrar sesión</button>
+    </nav>
   </header>
 
-  <main class="max-w-6xl mx-auto p-6 space-y-8">
+  <div class="stripes"></div>
+  <div class="neon"></div>
 
-    <!-- Formulario para Crear / Editar Videojuego -->
-    <section class="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
-      <h2 id="titulo-formulario" class="text-lg font-semibold text-indigo-400 mb-4">
-        Registrar Nuevo Videojuego
-      </h2>
+  <main class="max-w-4xl mx-auto px-4 pb-16">
+    <div class="card">
+      <h2>Panel del administrador</h2>
+      <p class="msg" id="msg" role="status">Presiona START para abrir el panel de gestión.</p>
+      <div class="big" id="big">READY</div>
+      <div class="row">
+        <button class="btn p" id="btn-start" type="button">▶ Start</button>
+      </div>
+    </div>
 
-      <form id="form-videojuego" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- ID oculto para modo edición -->
-        <input type="hidden" id="juego-id">
+    <section id="panel" hidden>
+      <p class="msg" id="fmsg" role="alert"></p>
 
-        <div>
-          <label for="titulo" class="block text-sm font-medium text-slate-300 mb-1">
-            Título del videojuego *
-          </label>
-          <input type="text" id="titulo" placeholder="Ej. Grand Theft Auto: San Andreas"
-            class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white focus:border-indigo-500 focus:outline-none">
+      <div class="card">
+        <h2 id="titulo-formulario">Nuevo videojuego</h2>
+        <form id="form-videojuego" novalidate>
+          <input type="hidden" id="juego-id">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="titulo">Título *</label>
+              <input id="titulo" maxlength="60" placeholder="Ej.: Hollow Knight">
+            </div>
+
+            <div>
+              <label for="genero">Género *</label>
+              <input id="genero" maxlength="30" placeholder="Ej.: Metroidvania">
+            </div>
+
+            <div>
+              <label for="plataforma">Plataforma *</label>
+              <select id="plataforma">
+                <option value="">Elige una plataforma</option>
+                <option value="PC">PC</option>
+                <option value="Consola">Consola</option>
+                <option value="Móvil">Móvil</option>
+                <option value="Arcade">Arcade</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="imagen">Imagen (URL, opcional)</label>
+              <input id="imagen" placeholder="https://...">
+            </div>
+          </div>
+
+          <label for="descripcion">Descripción *</label>
+          <textarea id="descripcion" rows="3" maxlength="300" placeholder="Describe brevemente el juego..."></textarea>
+
+          <div class="row mt-4">
+            <button class="btn p" id="btn-guardar" type="submit">Crear juego</button>
+            <button class="btn" id="btn-cancelar" type="button" hidden>Cancelar edición</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h2 class="m-0">Juegos registrados</h2>
+          <span id="contador-juegos" class="text-sm font-bold">0 juegos</span>
         </div>
+        <div id="tabla-videojuegos"></div>
+      </div>
+    </section>
+  </main>
 
-        <div>
-          <label for="genero" class="block text-sm font-medium text-slate-300 mb-1">
-            Género *
-          </label>
-          <input type="text" id="genero" placeholder="Ej. Acción / Mundo Abierto"
-            class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white focus:border-indigo-500 focus:outline-none">
-        </div>
-
-        <div>
-          <label for="plataforma" class="block text-sm font-medium text-slate-300 mb-1">
-            Plataforma *
-          </label>
-          <select id="plataforma"
-            class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white focus:border-indigo-500 focus:outline-none">
-            <option value="">Selecciona una plataforma</option>
-            <option value="PC">PC</option>
-            <option value="PlayStation 5">PlayStation 5</option>
-            <option value="Xbox Series
+  <script src="../js/admin.js"></script>
+</body>
+</html>
