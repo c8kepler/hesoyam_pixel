@@ -1,0 +1,16 @@
+{
+  "videojuegos": [
+    {
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "titulo": "The Legend of Zelda: Breath of the Wild",
+      "genero": "Aventura",
+      "plataforma": "Nintendo Switch",
+      "descripcion": "Aventura de mundo abierto en el reino de Hyrule.",
+      "imagen": "https://placehold.co/300x180?text=Zelda+BOTW"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
