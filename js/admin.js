@@ -1,4 +1,3 @@
-// Reemplaza por la URL HTTPS de tu JSON Server alojado cuando esté desplegado
 let API_URL = "http://localhost:3000/videojuegos";
 
 if (localStorage.getItem("sesionActiva") !== "true") {
