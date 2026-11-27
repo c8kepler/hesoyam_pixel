@@ -1,0 +1,224 @@
+:root {
+  --bg-dark: #090614;
+  --bg-card: rgba(18, 12, 36, 0.88);
+  --neon-cyan: #00f5d4;
+  --neon-pink: #ff2a85;
+  --neon-yellow: #ffd166;
+  --neon-purple: #9b5de5;
+  --text-main: #f4f1ff;
+  --text-muted: #b5add6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.05rem;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Fondo tipo piso reticular retro */
+.floor {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(to bottom, rgba(9, 6, 20, 0.25) 0%, rgba(9, 6, 20, 0.92) 65%, #06030e 100%),
+    repeating-linear-gradient(90deg, rgba(0, 245, 212, 0.08) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(0deg, rgba(255, 42, 133, 0.08) 0 1px, transparent 1px 48px);
+}
+
+#rain {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Encabezado */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.75rem;
+  background: rgba(12, 8, 26, 0.9);
+  border-bottom: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 245, 212, 0.25);
+}
+
+.glitch {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+  color: var(--neon-cyan);
+  text-shadow: 2px 2px var(--neon-pink), -2px -2px rgba(155, 93, 229, 0.7);
+  margin: 0 0 0.4rem 0;
+  letter-spacing: 1px;
+}
+
+.tag {
+  display: inline-block;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  color: var(--neon-yellow);
+  letter-spacing: 0.5px;
+}
+
+/* Franjas y barra neón */
+.stripes {
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--neon-pink) 0 24px,
+    var(--neon-yellow) 24px 48px,
+    var(--neon-cyan) 48px 72px,
+    var(--neon-purple) 72px 96px
+  );
+}
+
+.neon {
+  height: 2px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 12px var(--neon-cyan), 0 0 24px var(--neon-pink);
+  margin-bottom: 2rem;
+}
+
+/* Tarjetas retro */
+.card {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 2px solid rgba(0, 245, 212, 0.45);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.65), inset 0 0 18px rgba(155, 93, 229, 0.14);
+}
+
+.card h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: var(--neon-yellow);
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.msg {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.big {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  color: var(--neon-pink);
+  text-shadow: 0 0 12px rgba(255, 42, 133, 0.75);
+  margin: 0.75rem 0 1.25rem 0;
+}
+
+/* Botones personalizados */
+.btn {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.6px;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.btn:hover,
+.btn:focus {
+  color: #090614;
+  background: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 16px var(--neon-cyan);
+  transform: translateY(-1px);
+}
+
+.btn.p {
+  background: rgba(255, 42, 133, 0.18);
+  border-color: var(--neon-pink);
+  color: #fff;
+}
+
+.btn.p:hover,
+.btn.p:focus {
+  background: var(--neon-pink);
+  border-color: var(--neon-pink);
+  color: #fff;
+  box-shadow: 0 0 18px var(--neon-pink);
+}
+
+/* Formularios */
+.form-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  color: var(--neon-cyan);
+  margin-bottom: 0.35rem;
+}
+
+.form-control,
+.form-select {
+  background-color: rgba(8, 5, 18, 0.9);
+  color: var(--text-main);
+  border: 1.5px solid rgba(155, 93, 229, 0.65);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+}
+
+.form-control::placeholder {
+  color: rgba(181, 173, 214, 0.55);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(12, 8, 28, 0.95);
+  color: #fff;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 0.2rem rgba(0, 245, 212, 0.22);
+}
+
+#contador-juegos {
+  color: var(--neon-cyan);
+  background: rgba(0, 245, 212, 0.12);
+  border: 1px solid rgba(0, 245, 212, 0.4);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+}
+
+/* Tabla dinámica si admin.js inyecta <table> */
+#tabla-videojuegos table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-main);
+}
+
+#tabla-videojuegos th,
+#tabla-videojuegos td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: left;
+}
+
+#tabla-videojuegos th {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.78rem;
+  color: var(--neon-yellow);
+}
