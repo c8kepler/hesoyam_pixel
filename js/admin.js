@@ -11,7 +11,7 @@ const inputDescripcion = document.getElementById("descripcion");
 const tituloForm = document.getElementById("titulo-formulario");
 const btnGuardar = document.getElementById("btn-guardar");
 const btnCancelar = document.getElementById("btn-cancelar");
-const tablaBody = document.getElementById("tabla-videojuegos");
+const contenedorJuegos = document.getElementById("tabla-videojuegos");
 const contadorJuegos = document.getElementById("contador-juegos");
 const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
 
@@ -28,37 +28,61 @@ async function cargarVideojuegos() {
     }
 
     const videojuegos = await respuesta.json();
-    tablaBody.innerHTML = "";
-    contadorJuegos.textContent = `${videojuegos.length} registros`;
+    contadorJuegos.textContent = `${videojuegos.length} juegos`;
+
+    if (videojuegos.length === 0) {
+      contenedorJuegos.innerHTML = `<p class="text-center opacity-75 my-3">No hay videojuegos registrados aún.</p>`;
+      return;
+    }
+
+    // Usamos el sistema de grillas de Bootstrap (row + col) para crear tarjetas organizadas
+    let htmlTarjetas = `<div class="row g-3">`;
 
     videojuegos.forEach((juego) => {
-      tablaBody.innerHTML += `
-        <tr class="hover:bg-slate-800/60">
-          <td class="py-3 px-4">
-            <img src="${juego.imagen}" alt="${juego.titulo}"
-              class="w-20 h-12 object-cover rounded bg-slate-800">
-          </td>
-          <td class="py-3 px-4 font-medium text-white">${juego.titulo}</td>
-          <td class="py-3 px-4 text-slate-300">${juego.genero}</td>
-          <td class="py-3 px-4">
-            <span class="bg-indigo-950 text-indigo-300 border border-indigo-800 px-2.5 py-1 rounded text-xs">
-              ${juego.plataforma}
-            </span>
-          </td>
-          <td class="py-3 px-4 text-slate-300 max-w-xs truncate">${juego.descripcion}</td>
-          <td class="py-3 px-4 text-right space-x-2 whitespace-nowrap">
-            <button type="button" onclick="prepararEdicion('${juego.id}')"
-              class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded text-xs font-medium">
-              Editar
-            </button>
-            <button type="button" onclick="eliminarVideojuego('${juego.id}')"
-              class="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded text-xs font-medium">
-              Eliminar
-            </button>
-          </td>
-        </tr>
+      // Validamos propiedades por si algún registro viejo en la DB tiene campos undefined
+      const titulo = juego.titulo || "Sin título";
+      const genero = juego.genero || "Sin género";
+      const plataforma = juego.plataforma || "N/A";
+      const descripcion = juego.descripcion || "Sin descripción disponible.";
+      const imagen = juego.imagen || "https://placehold.co/300x180?text=Sin+Portada";
+
+      htmlTarjetas += `
+        <div class="col-12 col-md-6">
+          <div class="card h-100 d-flex flex-column justify-content-between p-3" style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3);">
+            <div>
+              <img 
+                src="${imagen}" 
+                alt="${titulo}" 
+                class="w-100 rounded mb-3" 
+                style="height: 150px; object-fit: cover;"
+                onerror="this.src='https://placehold.co/300x180?text=Error+Imagen'"
+              >
+              
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <h5 class="m-0 fw-bold text-white">${titulo}</h5>
+                <span class="badge bg-info text-dark">${plataforma}</span>
+              </div>
+              
+              <p class="small text-info mb-2"><strong>Género:</strong> ${genero}</p>
+              <p class="small text-light opacity-75 mb-3">${descripcion}</p>
+            </div>
+
+            <div class="d-flex gap-2 pt-2 border-top border-secondary">
+              <button type="button" onclick="prepararEdicion('${juego.id}')" class="btn btn-warning btn-sm flex-fill fw-bold">
+                Editar
+              </button>
+              <button type="button" onclick="eliminarVideojuego('${juego.id}')" class="btn btn-danger btn-sm flex-fill fw-bold">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
       `;
     });
+
+    htmlTarjetas += `</div>`;
+    contenedorJuegos.innerHTML = htmlTarjetas;
+
   } catch (error) {
     Swal.fire(
       "Error de conexión",
@@ -74,7 +98,7 @@ form.addEventListener("submit", async (evento) => {
   const titulo = inputTitulo.value.trim();
   const genero = inputGenero.value.trim();
   const plataforma = inputPlataforma.value.trim();
-  const imagen = inputImagen.value.trim() || "https://placehold.co/120x80?text=Sin+Portada";
+  const imagen = inputImagen.value.trim() || "https://placehold.co/300x180?text=Sin+Portada";
   const descripcion = inputDescripcion.value.trim();
 
   if (!titulo || !genero || !plataforma || !descripcion) {
@@ -136,15 +160,18 @@ async function prepararEdicion(id) {
 
     const juego = await respuesta.json();
     inputId.value = juego.id;
-    inputTitulo.value = juego.titulo;
-    inputGenero.value = juego.genero;
-    inputPlataforma.value = juego.plataforma;
-    inputImagen.value = juego.imagen;
-    inputDescripcion.value = juego.descripcion;
+    inputTitulo.value = juego.titulo || "";
+    inputGenero.value = juego.genero || "";
+    inputPlataforma.value = juego.plataforma || "";
+    inputImagen.value = juego.imagen || "";
+    inputDescripcion.value = juego.descripcion || "";
 
     tituloForm.textContent = "Editar Videojuego";
     btnGuardar.textContent = "Actualizar Videojuego";
-    btnCancelar.classList.remove("hidden");
+    btnCancelar.classList.remove("d-none"); // Corregido a d-none (Bootstrap)
+    
+    // Hace scroll suave hacia el formulario para comodidad del admin
+    form.scrollIntoView({ behavior: "smooth" });
   } catch (error) {
     Swal.fire("Error", "No se pudieron cargar los datos para editar.", "error");
   }
@@ -185,9 +212,9 @@ async function eliminarVideojuego(id) {
 function limpiarFormulario() {
   form.reset();
   inputId.value = "";
-  tituloForm.textContent = "Registrar Nuevo Videojuego";
-  btnGuardar.textContent = "Guardar Videojuego";
-  btnCancelar.classList.add("hidden");
+  tituloForm.textContent = "Nuevo videojuego";
+  btnGuardar.textContent = "Crear juego";
+  btnCancelar.classList.add("d-none"); // Corregido a d-none (Bootstrap)
 }
 
 btnCancelar.addEventListener("click", limpiarFormulario);
