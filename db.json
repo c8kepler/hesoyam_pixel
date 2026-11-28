@@ -39,6 +39,24 @@
       "imagen": "https://imgs.search.brave.com/ro0wHaUKDWYxPmOe9m8DzebLMsi1vqvjwJwSj3mKY9E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMubGF1bmNoYm94/LWFwcC5jb20vYjIx/OWQxMzgtYTYxOS00/NzQwLTkxZjMtYTA4/NjFlYTkyOTc3Lmpw/Zw",
       "descripcion": "Tetris",
       "id": "jQe98BQixtE"
+    },
+    {
+      "titulo": "Halo",
+      "genero": "Acción",
+      "plataforma": "Consola",
+      "imagen": "https://imgs.search.brave.com/LSA9B8ERUkaIoy5RlAJSgNnzCINSgDi8HGOlrVZ_PHw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZS5hcGkucGxheXN0/YXRpb24uY29tL3Z1/bGNhbi9hcC9ybmQv/MjAyNTEwLzEzMjEv/YTBkNTI0NDVmY2I1/ZDk2ZDY2YTM2MWI2/NzU5ZDFiOGI5NTlj/NDY0NGNlYTcwNzE0/LnBuZw",
+      "descripcion": "El mejor juego del mundo",
+      "id": "D5nqqK6mTjg"
+    },
+    {
+      "titulo": "Hollow Knigth",
+      "genero": "Metroidvania",
+      "plataforma": "Consola",
+      "imagen": "https://imgs.search.brave.com/B_REHOsT0NyKQhvCyxBrCV3K_5fWw8SrEMoPky4pKTY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMtcHJkLmlnbmlt/Z3MuY29tLzIwMjEv/MTIvMDcvaG9sbG93/a25pZ2h0LTE2Mzg5/MDg4ODgyNTcucG5n/P2Nyb3A9MToxLHNt/YXJ0JmZvcm1hdD1q/cGcmYXV0bz13ZWJw/JnF1YWxpdHk9ODA",
+      "tutorial": "https://search.brave.com/go/v1#AU_oX0MIHrm5awow8AFgZfQbj4ewTSjIy-So-J_ogb0uvzECPP4vk78xZP8MJcDipi_ps94sYvOQZ15yeN-YE5nKQyoGThnkThyQfy84afSkXTyLVO8FwCh_0w9EDAbcXFAVhgvV0PhBcWuiKHof57y8SyufZrtEgUPLHf4CVikzImpRgDwDkmknoyvvPkLPweINgU-9OjNhHsKT_Q8",
+      "wiki": "https://search.brave.com/go/v1#AfMhNNTcjRIXawoweAEzfrDhstIKM0mbsKcsakgdgCwA-ysQoftvgild13AjKAyK4Cv3G6ouV9Yguwlw4nLqQFjxG0Z9DY4QT6LnQGeWzG9-zh3ZXUGafymr0NXrnZ35ZzYiqFlnSBl1duqRDN1TuXY3IeOwOWd6QxwOn06cEPX2bOuHW8llrAQWRqYCggT5I4d3E-6_YXLQL-E0cl7bAXMk0OJwFGIZnAw",
+      "descripcion": "asdad",
+      "id": "dXzwQaBkMDQ"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

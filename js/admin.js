@@ -6,6 +6,8 @@ const inputTitulo = document.getElementById("titulo");
 const inputGenero = document.getElementById("genero");
 const inputPlataforma = document.getElementById("plataforma");
 const inputImagen = document.getElementById("imagen");
+const inputTutorial = document.getElementById("tutorial");
+const inputWiki = document.getElementById("wiki");
 const inputDescripcion = document.getElementById("descripcion");
 
 const tituloForm = document.getElementById("titulo-formulario");
@@ -19,6 +21,19 @@ btnCerrarSesion.addEventListener("click", () => {
   localStorage.removeItem("sesionActiva");
   window.location.href = "../pages/login.html";
 });
+
+function obtenerEnlacesJuego(juego) {
+  const titulo = juego.titulo || "Videojuego";
+  const urlTutorial = juego.tutorial && juego.tutorial.trim() !== ""
+    ? juego.tutorial
+    : `https://www.youtube.com/results?search_query=${encodeURIComponent(`${titulo} guia tutorial español`)}`;
+
+  const urlWiki = juego.wiki && juego.wiki.trim() !== ""
+    ? juego.wiki
+    : `https://www.google.com/search?q=${encodeURIComponent(`${titulo} wiki`)}`;
+
+  return { urlTutorial, urlWiki };
+}
 
 async function cargarVideojuegos() {
   try {
@@ -35,16 +50,15 @@ async function cargarVideojuegos() {
       return;
     }
 
-    // Usamos el sistema de grillas de Bootstrap (row + col) para crear tarjetas organizadas
     let htmlTarjetas = `<div class="row g-3">`;
 
     videojuegos.forEach((juego) => {
-      // Validamos propiedades por si algún registro viejo en la DB tiene campos undefined
       const titulo = juego.titulo || "Sin título";
       const genero = juego.genero || "Sin género";
       const plataforma = juego.plataforma || "N/A";
       const descripcion = juego.descripcion || "Sin descripción disponible.";
       const imagen = juego.imagen || "https://placehold.co/300x180?text=Sin+Portada";
+      const { urlTutorial, urlWiki } = obtenerEnlacesJuego(juego);
 
       htmlTarjetas += `
         <div class="col-12 col-md-6">
@@ -67,13 +81,33 @@ async function cargarVideojuegos() {
               <p class="small text-light opacity-75 mb-3">${descripcion}</p>
             </div>
 
-            <div class="d-flex gap-2 pt-2 border-top border-secondary">
-              <button type="button" onclick="prepararEdicion('${juego.id}')" class="btn btn-warning btn-sm flex-fill fw-bold">
-                Editar
-              </button>
-              <button type="button" onclick="eliminarVideojuego('${juego.id}')" class="btn btn-danger btn-sm flex-fill fw-bold">
-                Eliminar
-              </button>
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <a href="${urlTutorial}" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="btn btn-outline-danger btn-sm py-0 px-2"
+                   style="font-size: 0.75rem;">
+                  ▶ Tutorial
+                </a>
+
+                <a href="${urlWiki}" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="btn btn-outline-info btn-sm py-0 px-2"
+                   style="font-size: 0.75rem;">
+                  📖 Wiki
+                </a>
+              </div>
+
+              <div class="d-flex gap-2 pt-2 border-top border-secondary">
+                <button type="button" onclick="prepararEdicion('${juego.id}')" class="btn btn-warning btn-sm flex-fill fw-bold">
+                  Editar
+                </button>
+                <button type="button" onclick="eliminarVideojuego('${juego.id}')" class="btn btn-danger btn-sm flex-fill fw-bold">
+                  Eliminar
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -99,6 +133,8 @@ form.addEventListener("submit", async (evento) => {
   const genero = inputGenero.value.trim();
   const plataforma = inputPlataforma.value.trim();
   const imagen = inputImagen.value.trim() || "https://placehold.co/300x180?text=Sin+Portada";
+  const tutorial = inputTutorial.value.trim();
+  const wiki = inputWiki.value.trim();
   const descripcion = inputDescripcion.value.trim();
 
   if (!titulo || !genero || !plataforma || !descripcion) {
@@ -110,7 +146,7 @@ form.addEventListener("submit", async (evento) => {
     return;
   }
 
-  const juegoData = { titulo, genero, plataforma, imagen, descripcion };
+  const juegoData = { titulo, genero, plataforma, imagen, tutorial, wiki, descripcion };
   const idActual = inputId.value;
 
   try {
@@ -164,13 +200,14 @@ async function prepararEdicion(id) {
     inputGenero.value = juego.genero || "";
     inputPlataforma.value = juego.plataforma || "";
     inputImagen.value = juego.imagen || "";
+    inputTutorial.value = juego.tutorial || "";
+    inputWiki.value = juego.wiki || "";
     inputDescripcion.value = juego.descripcion || "";
 
     tituloForm.textContent = "Editar Videojuego";
     btnGuardar.textContent = "Actualizar Videojuego";
-    btnCancelar.classList.remove("d-none"); // Corregido a d-none (Bootstrap)
+    btnCancelar.classList.remove("d-none");
     
-    // Hace scroll suave hacia el formulario para comodidad del admin
     form.scrollIntoView({ behavior: "smooth" });
   } catch (error) {
     Swal.fire("Error", "No se pudieron cargar los datos para editar.", "error");
@@ -214,7 +251,7 @@ function limpiarFormulario() {
   inputId.value = "";
   tituloForm.textContent = "Nuevo videojuego";
   btnGuardar.textContent = "Crear juego";
-  btnCancelar.classList.add("d-none"); // Corregido a d-none (Bootstrap)
+  btnCancelar.classList.add("d-none");
 }
 
 btnCancelar.addEventListener("click", limpiarFormulario);

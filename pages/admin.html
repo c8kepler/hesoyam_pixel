@@ -10,7 +10,7 @@
 
   <script src="../js/guard.js"></script>
 </head>
-<body >
+<body>
   <div class="floor"></div>
   <canvas id="rain"></canvas>
 
@@ -24,7 +24,6 @@
       <button class="btn" id="btn-cerrar-sesion" type="button">Cerrar sesión</button>
     </nav>
   </header>
-
 
   <main class="container px-3 pb-5" style="max-width: 896px;">
     <div class="card mt-5">
@@ -67,7 +66,18 @@
 
             <div class="col-12 col-md-6">
               <label for="imagen" class="form-label">Imagen (URL, opcional)</label>
-              <input id="imagen" class="form-control" placeholder="https://...">
+              <input id="imagen" type="url" class="form-control" placeholder="https://...">
+            </div>
+
+            <!-- Nuevos inputs para Tutorial y Wiki -->
+            <div class="col-12 col-md-6">
+              <label for="tutorial" class="form-label">Tutorial YouTube (URL, opcional)</label>
+              <input id="tutorial" type="url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="wiki" class="form-label">Wiki del juego (URL, opcional)</label>
+              <input id="wiki" type="url" class="form-control" placeholder="https://...fandom.com/wiki/...">
             </div>
           </div>
 
