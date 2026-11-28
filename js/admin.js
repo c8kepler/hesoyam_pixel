@@ -1,9 +1,5 @@
 let API_URL = "http://localhost:3000/videojuegos";
 
-if (localStorage.getItem("sesionActiva") !== "true") {
-  window.location.href = "login.html";
-}
-
 const form = document.getElementById("form-videojuego");
 const inputId = document.getElementById("juego-id");
 const inputTitulo = document.getElementById("titulo");
@@ -21,7 +17,7 @@ const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
 
 btnCerrarSesion.addEventListener("click", () => {
   localStorage.removeItem("sesionActiva");
-  window.location.href = "login.html";
+  window.location.href = "../pages/login.html";
 });
 
 async function cargarVideojuegos() {

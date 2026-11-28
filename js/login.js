@@ -1,25 +1,34 @@
+// js/login.js
+const formLogin = document.getElementById("formLogin");
+const inputUser = document.getElementById("user");
+const inputPassword = document.getElementById("password");
+const mensajeError = document.getElementById("mensaje");
 
-const formulario = document.getElementById("formLogin");
+if (formLogin) {
+  formLogin.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-formulario.addEventListener("submit", function(event) {
+    const usuario = inputUser ? inputUser.value.trim() : "";
+    const password = inputPassword ? inputPassword.value : "";
 
-    event.preventDefault();
+    // Credenciales locales sin tocar db.json
+    const accesoValido = usuario === "admin" && password === "1234";
 
-    const usuario = document.getElementById("user").value;
-    const password = document.getElementById("password").value;
-
-    const mensaje = document.getElementById("mensaje");
-
-    // Validar usuario y contraseña
-    if (usuario === "admin" && password === "12345") {
-
-        // Guardar sesión en localStorage
-        localStorage.setItem("sesion", "activa");
-
-        window.location.href = "panel.html";
-
-    } else {
-        mensaje.textContent = "Usuario o contraseña incorrectos";
+    if (!accesoValido) {
+      if (mensajeError) {
+        mensajeError.textContent = "Usuario o contraseña incorrectos.";
+      }
+      if (typeof Swal !== "undefined") {
+        Swal.fire("Acceso denegado", "Usuario o contraseña incorrectos.", "error");
+      }
+      return;
     }
 
-});
+    if (mensajeError) {
+      mensajeError.textContent = "";
+    }
+
+    localStorage.setItem("sesionActiva", "true");
+    window.location.href = "./admin.html";
+  });
+}

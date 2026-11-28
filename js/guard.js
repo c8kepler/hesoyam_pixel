@@ -1,4 +1,8 @@
-const sesion = localStorage.getItem("sesion");
-if (sesion !== "activa") {
-    window.location.href = "login.html";
-}
+// js/guard.js
+(function protegerAdmin() {
+  const sesionActiva = localStorage.getItem("sesionActiva") === "true";
+
+  if (!sesionActiva) {
+    window.location.replace("./login.html");
+  }
+})();
