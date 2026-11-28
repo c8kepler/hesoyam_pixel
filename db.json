@@ -31,6 +31,14 @@
       "imagen": "https://imgs.search.brave.com/Z5BL9nP15eGXV10EyHK-AAVPwsQbx7rTs6zqmCLesF4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL00v/TVY1QlpEQm1Zelkz/TlRJdFpUQTNOeTAw/T1dZMkxUbGlZelF0/TTJVd016UmpNalUy/T0dZelhrRXlYa0Zx/Y0djQC5qcGc",
       "descripcion": "Enfréntate a una nueva amenaza biológica en una experiencia de terror y supervivencia en primera persona.",
       "id": "re9req-04"
+    },
+    {
+      "titulo": "Tetris",
+      "genero": "Tetris",
+      "plataforma": "Arcade",
+      "imagen": "https://imgs.search.brave.com/ro0wHaUKDWYxPmOe9m8DzebLMsi1vqvjwJwSj3mKY9E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMubGF1bmNoYm94/LWFwcC5jb20vYjIx/OWQxMzgtYTYxOS00/NzQwLTkxZjMtYTA4/NjFlYTkyOTc3Lmpw/Zw",
+      "descripcion": "Tetris",
+      "id": "jQe98BQixtE"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
