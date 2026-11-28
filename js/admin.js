@@ -1,259 +1,149 @@
-let API_URL = "http://localhost:3000/videojuegos";
+const API_URL = "http://localhost:3000/videojuegos";
 
-const form = document.getElementById("form-videojuego");
-const inputId = document.getElementById("juego-id");
-const inputTitulo = document.getElementById("titulo");
-const inputGenero = document.getElementById("genero");
-const inputPlataforma = document.getElementById("plataforma");
-const inputImagen = document.getElementById("imagen");
-const inputTutorial = document.getElementById("tutorial");
-const inputWiki = document.getElementById("wiki");
-const inputDescripcion = document.getElementById("descripcion");
-
-const tituloForm = document.getElementById("titulo-formulario");
-const btnGuardar = document.getElementById("btn-guardar");
-const btnCancelar = document.getElementById("btn-cancelar");
-const contenedorJuegos = document.getElementById("tabla-videojuegos");
+const contenedorCatalogo = document.getElementById("catalogo-videojuegos");
 const contadorJuegos = document.getElementById("contador-juegos");
-const btnCerrarSesion = document.getElementById("btn-cerrar-sesion");
+const inputBuscador = document.getElementById("buscador");
+const selectPlataforma = document.getElementById("filtro-plataforma");
 
-btnCerrarSesion.addEventListener("click", () => {
-  localStorage.removeItem("sesionActiva");
-  window.location.href = "../pages/login.html";
-});
+let listaVideojuegos = [];
 
-function obtenerEnlacesJuego(juego) {
-  const titulo = juego.titulo || "Videojuego";
-  const urlTutorial = juego.tutorial && juego.tutorial.trim() !== ""
-    ? juego.tutorial
-    : `https://www.youtube.com/results?search_query=${encodeURIComponent(`${titulo} guia tutorial español`)}`;
-
-  const urlWiki = juego.wiki && juego.wiki.trim() !== ""
-    ? juego.wiki
-    : `https://www.google.com/search?q=${encodeURIComponent(`${titulo} wiki`)}`;
-
-  return { urlTutorial, urlWiki };
-}
-
-async function cargarVideojuegos() {
+async function cargarCatalogo() {
   try {
     const respuesta = await fetch(API_URL);
     if (!respuesta.ok) {
       throw new Error("Error al consultar los videojuegos");
     }
 
-    const videojuegos = await respuesta.json();
-    contadorJuegos.textContent = `${videojuegos.length} juegos`;
+    listaVideojuegos = await respuesta.json();
+    aplicarFiltros();
+  } catch (error) {
+    contenedorCatalogo.innerHTML = `
+      <p class="text-center text-danger my-3">
+        No se pudo conectar con el servidor. Verifica que json-server esté encendido en el puerto 3000.
+      </p>`;
+  }
+}
 
-    if (videojuegos.length === 0) {
-      contenedorJuegos.innerHTML = `<p class="text-center opacity-75 my-3">No hay videojuegos registrados aún.</p>`;
-      return;
-    }
+function renderizarTarjetas(juegos) {
+  contadorJuegos.textContent = `${juegos.length} juegos`;
 
-    let htmlTarjetas = `<div class="row g-3">`;
+  if (juegos.length === 0) {
+    contenedorCatalogo.innerHTML = `<p class="text-center opacity-75 my-4">No se encontraron títulos que coincidan con tu búsqueda.</p>`;
+    return;
+  }
 
-    videojuegos.forEach((juego) => {
-      const titulo = juego.titulo || "Sin título";
-      const genero = juego.genero || "Sin género";
-      const plataforma = juego.plataforma || "N/A";
-      const descripcion = juego.descripcion || "Sin descripción disponible.";
-      const imagen = juego.imagen || "https://placehold.co/300x180?text=Sin+Portada";
-      const { urlTutorial, urlWiki } = obtenerEnlacesJuego(juego);
+  let htmlTarjetas = `<div class="row g-3">`;
 
-      htmlTarjetas += `
-        <div class="col-12 col-md-6">
-          <div class="card h-100 d-flex flex-column justify-content-between p-3" style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3);">
-            <div>
-              <img 
-                src="${imagen}" 
-                alt="${titulo}" 
-                class="w-100 rounded mb-3" 
-                style="height: 150px; object-fit: cover;"
-                onerror="this.src='https://placehold.co/300x180?text=Error+Imagen'"
-              >
-              
-              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                <h5 class="m-0 fw-bold text-white">${titulo}</h5>
-                <span class="badge bg-info text-dark">${plataforma}</span>
-              </div>
-              
-              <p class="small text-info mb-2"><strong>Género:</strong> ${genero}</p>
-              <p class="small text-light opacity-75 mb-3">${descripcion}</p>
-            </div>
+  juegos.forEach((juego) => {
+    const titulo = juego.titulo || "Sin título";
+    const genero = juego.genero || "Sin género";
+    const plataforma = juego.plataforma || "N/A";
+    const descripcion = juego.descripcion || "Sin descripción disponible.";
+    const imagen = juego.imagen || "https://placehold.co/300x180?text=Sin+Portada";
 
-            <div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <a href="${urlTutorial}" 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   class="btn btn-outline-danger btn-sm py-0 px-2"
-                   style="font-size: 0.75rem;">
-                  ▶ Tutorial
-                </a>
+    const tieneTutorial = juego.tutorial && juego.tutorial.trim() !== "";
+    const tieneWiki = juego.wiki && juego.wiki.trim() !== "";
 
-                <a href="${urlWiki}" 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   class="btn btn-outline-info btn-sm py-0 px-2"
-                   style="font-size: 0.75rem;">
-                  📖 Wiki
-                </a>
-              </div>
+    let htmlEnlaces = "";
+    if (tieneTutorial || tieneWiki) {
+      htmlEnlaces = `
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+          ${tieneTutorial ? `
+            <a href="${juego.tutorial}" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               onclick="event.stopPropagation()"
+               class="btn btn-outline-danger btn-sm py-0 px-2"
+               style="font-size: 0.75rem;">
+              ▶ Tutorial
+            </a>` : `<span></span>`}
 
-              <div class="d-flex gap-2 pt-2 border-top border-secondary">
-                <button type="button" onclick="prepararEdicion('${juego.id}')" class="btn btn-warning btn-sm flex-fill fw-bold">
-                  Editar
-                </button>
-                <button type="button" onclick="eliminarVideojuego('${juego.id}')" class="btn btn-danger btn-sm flex-fill fw-bold">
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
+          ${tieneWiki ? `
+            <a href="${juego.wiki}" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               onclick="event.stopPropagation()"
+               class="btn btn-outline-info btn-sm py-0 px-2"
+               style="font-size: 0.75rem;">
+              📖 Wiki
+            </a>` : ""}
         </div>
       `;
-    });
-
-    htmlTarjetas += `</div>`;
-    contenedorJuegos.innerHTML = htmlTarjetas;
-
-  } catch (error) {
-    Swal.fire(
-      "Error de conexión",
-      "No se pudo cargar el catálogo. Revisa la URL de la API.",
-      "error"
-    );
-  }
-}
-
-form.addEventListener("submit", async (evento) => {
-  evento.preventDefault();
-
-  const titulo = inputTitulo.value.trim();
-  const genero = inputGenero.value.trim();
-  const plataforma = inputPlataforma.value.trim();
-  const imagen = inputImagen.value.trim() || "https://placehold.co/300x180?text=Sin+Portada";
-  const tutorial = inputTutorial.value.trim();
-  const wiki = inputWiki.value.trim();
-  const descripcion = inputDescripcion.value.trim();
-
-  if (!titulo || !genero || !plataforma || !descripcion) {
-    Swal.fire(
-      "Campos incompletos",
-      "Completa título, género, plataforma y descripción antes de guardar.",
-      "warning"
-    );
-    return;
-  }
-
-  const juegoData = { titulo, genero, plataforma, imagen, tutorial, wiki, descripcion };
-  const idActual = inputId.value;
-
-  try {
-    let respuesta;
-
-    if (idActual) {
-      respuesta = await fetch(`${API_URL}/${idActual}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(juegoData)
-      });
-    } else {
-      respuesta = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(juegoData)
-      });
     }
 
-    if (!respuesta.ok) {
-      throw new Error("Error al guardar en la API");
-    }
+    htmlTarjetas += `
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 d-flex flex-column justify-content-between p-3"
+             style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3); cursor: pointer;"
+             onclick="verDetalle('${juego.id}')">
+          
+          <div>
+            <img 
+              src="${imagen}" 
+              alt="${titulo}" 
+              class="w-100 rounded mb-3" 
+              style="height: 160px; object-fit: cover;"
+              onerror="this.src='https://placehold.co/300x180?text=Error+Imagen'"
+            >
+            
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <h5 class="m-0 fw-bold text-white">${titulo}</h5>
+              <span class="badge bg-info text-dark">${plataforma}</span>
+            </div>
+            
+            <p class="small text-info mb-2"><strong>Género:</strong> ${genero}</p>
+            <p class="small text-light opacity-75 mb-3">${descripcion}</p>
+          </div>
 
-    Swal.fire(
-      "¡Guardado!",
-      idActual ? "Videojuego actualizado correctamente." : "Videojuego agregado al catálogo.",
-      "success"
-    );
+          ${htmlEnlaces}
 
-    limpiarFormulario();
-    cargarVideojuegos();
-  } catch (error) {
-    Swal.fire(
-      "Error al guardar",
-      "No se pudo guardar el registro. Verifica la conexión con la API.",
-      "error"
-    );
-  }
-});
-
-async function prepararEdicion(id) {
-  try {
-    const respuesta = await fetch(`${API_URL}/${id}`);
-    if (!respuesta.ok) {
-      throw new Error("No se encontró el videojuego");
-    }
-
-    const juego = await respuesta.json();
-    inputId.value = juego.id;
-    inputTitulo.value = juego.titulo || "";
-    inputGenero.value = juego.genero || "";
-    inputPlataforma.value = juego.plataforma || "";
-    inputImagen.value = juego.imagen || "";
-    inputTutorial.value = juego.tutorial || "";
-    inputWiki.value = juego.wiki || "";
-    inputDescripcion.value = juego.descripcion || "";
-
-    tituloForm.textContent = "Editar Videojuego";
-    btnGuardar.textContent = "Actualizar Videojuego";
-    btnCancelar.classList.remove("d-none");
-    
-    form.scrollIntoView({ behavior: "smooth" });
-  } catch (error) {
-    Swal.fire("Error", "No se pudieron cargar los datos para editar.", "error");
-  }
-}
-
-async function eliminarVideojuego(id) {
-  const confirmacion = await Swal.fire({
-    title: "¿Eliminar videojuego?",
-    text: "Se eliminará del catálogo y dejará de mostrarse en la página pública.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#dc2626",
-    cancelButtonColor: "#475569",
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar"
+        </div>
+      </div>
+    `;
   });
 
-  if (!confirmacion.isConfirmed) {
-    return;
-  }
-
-  try {
-    const respuesta = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE"
-    });
-
-    if (!respuesta.ok) {
-      throw new Error("Error al eliminar el registro");
-    }
-
-    Swal.fire("Eliminado", "El videojuego fue eliminado correctamente.", "success");
-    cargarVideojuegos();
-  } catch (error) {
-    Swal.fire("Error", "No se pudo eliminar el registro.", "error");
-  }
+  htmlTarjetas += `</div>`;
+  contenedorCatalogo.innerHTML = htmlTarjetas;
 }
 
-function limpiarFormulario() {
-  form.reset();
-  inputId.value = "";
-  tituloForm.textContent = "Nuevo videojuego";
-  btnGuardar.textContent = "Crear juego";
-  btnCancelar.classList.add("d-none");
+function aplicarFiltros() {
+  const texto = inputBuscador.value.trim().toLowerCase();
+  const plataformaSeleccionada = selectPlataforma.value;
+
+  const filtrados = listaVideojuegos.filter((juego) => {
+    const coincideTexto =
+      (juego.titulo || "").toLowerCase().includes(texto) ||
+      (juego.genero || "").toLowerCase().includes(texto);
+
+    const coincidePlataforma =
+      plataformaSeleccionada === "" || juego.plataforma === plataformaSeleccionada;
+
+    return coincideTexto && coincidePlataforma;
+  });
+
+  renderizarTarjetas(filtrados);
 }
 
-btnCancelar.addEventListener("click", limpiarFormulario);
+function verDetalle(id) {
+  const juego = listaVideojuegos.find((item) => String(item.id) === String(id));
+  if (!juego) return;
 
-cargarVideojuegos();
+  Swal.fire({
+    title: juego.titulo,
+    html: `
+      <img src="${juego.imagen}" alt="${juego.titulo}" class="w-100 rounded mb-3" style="max-height: 220px; object-fit: cover;" onerror="this.src='https://placehold.co/300x180?text=Sin+Portada'">
+      <p class="mb-1"><strong>Plataforma:</strong> ${juego.plataforma}</p>
+      <p class="mb-3"><strong>Género:</strong> ${juego.genero}</p>
+      <p class="text-start small">${juego.descripcion}</p>
+    `,
+    background: "#0f172a",
+    color: "#f8fafc",
+    confirmButtonText: "Cerrar",
+    confirmButtonColor: "#0ea5e9"
+  });
+}
+
+inputBuscador.addEventListener("input", aplicarFiltros);
+selectPlataforma.addEventListener("change", aplicarFiltros);
+
+cargarCatalogo();

@@ -41,12 +41,35 @@ function renderizarTarjetas(juegos) {
     const descripcion = juego.descripcion || "Sin descripción disponible.";
     const imagen = juego.imagen || "https://placehold.co/300x180?text=Sin+Portada";
 
-    // URLs dinámicas generadas automáticamente según el título del juego
-    const queryYoutube = encodeURIComponent(`${titulo} guia tutorial español`);
-    const urlTutorial = `https://www.youtube.com/results?search_query=${queryYoutube}`;
+    const tieneTutorial = juego.tutorial && juego.tutorial.trim() !== "";
+    const tieneWiki = juego.wiki && juego.wiki.trim() !== "";
 
-    const queryWiki = encodeURIComponent(`${titulo} wiki`);
-    const urlWiki = `https://www.google.com/search?q=${queryWiki}`;
+    let htmlEnlaces = "";
+    if (tieneTutorial || tieneWiki) {
+      htmlEnlaces = `
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+          ${tieneTutorial ? `
+            <a href="${juego.tutorial}" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               onclick="event.stopPropagation()"
+               class="btn btn-outline-danger btn-sm py-0 px-2"
+               style="font-size: 0.75rem;">
+              ▶ Tutorial
+            </a>` : `<span></span>`}
+
+          ${tieneWiki ? `
+            <a href="${juego.wiki}" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               onclick="event.stopPropagation()"
+               class="btn btn-outline-info btn-sm py-0 px-2"
+               style="font-size: 0.75rem;">
+              📖 Wiki
+            </a>` : ""}
+        </div>
+      `;
+    }
 
     htmlTarjetas += `
       <div class="col-12 col-md-6 col-lg-4">
@@ -72,26 +95,7 @@ function renderizarTarjetas(juegos) {
             <p class="small text-light opacity-75 mb-3">${descripcion}</p>
           </div>
 
-          <!-- Pie de tarjeta con botones en esquina inferior izquierda y derecha -->
-          <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
-            <a href="${urlTutorial}" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               onclick="event.stopPropagation()"
-               class="btn btn-outline-danger btn-sm py-0 px-2"
-               style="font-size: 0.75rem;">
-              ▶ Tutorial
-            </a>
-
-            <a href="${urlWiki}" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               onclick="event.stopPropagation()"
-               class="btn btn-outline-info btn-sm py-0 px-2"
-               style="font-size: 0.75rem;">
-              📖 Wiki
-            </a>
-          </div>
+          ${htmlEnlaces}
 
         </div>
       </div>
